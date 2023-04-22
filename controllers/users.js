@@ -13,11 +13,18 @@ const getUsers = (req, res) => {
 // user Id
 const getUser = (req, res) => {
   User.findById(req.params.userId)
+    .orFail()
     .then((user) => {
       res.send(user);
     })
-    .catch(() => {
-      errorHandler(404, 'Пользователь по указанному _id не найден.', res);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        errorHandler(400, 'wrong format.', res);
+      } else if (err.name === 'DocumentNotFoundError') {
+        errorHandler(404, 'not found.', res);
+      } else {
+        errorHandler(500, '500.', res);
+      }
     });
 };
 
@@ -43,22 +50,22 @@ const createUser = (req, res) => {
 
 const changeUserInfo = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    {
-      name,
-      about,
-    },
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
+  User.findByIdAndUpdate(req.user._id, { name, about }, {
+    new: true,
+    runValidators: true,
+  })
+    .orFail()
     .then((user) => {
       res.send(user);
     })
-    .catch(() => {
-      errorHandler(404, 'Пользователь по указанному _id не найден.', res);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        errorHandler(400, 'Переданы некорректные данные при обновлении профиля.', res);
+      } else if (err.name === 'DocumentNotFoundError') {
+        errorHandler(404, 'Пользователь с указанным _id не найден.', res);
+      } else {
+        errorHandler(500, 'На сервере произошла ошибка.', res);
+      }
     });
 };
 
@@ -72,11 +79,18 @@ const changeUserAvatar = (req, res) => {
       runValidators: true,
     },
   )
+    .orFail()
     .then((user) => {
       res.send(user);
     })
-    .catch(() => {
-      errorHandler(404, 'Пользователь по указанному _id не найден.', res);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        errorHandler(400, 'Переданы некорректные данные при обновлении профиля.', res);
+      } else if (err.name === 'DocumentNotFoundError') {
+        errorHandler(404, 'Пользователь с указанным _id не найден.', res);
+      } else {
+        errorHandler(500, 'На сервере произошла ошибка.', res);
+      }
     });
 };
 
