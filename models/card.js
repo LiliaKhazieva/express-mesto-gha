@@ -14,7 +14,7 @@ const cardSchema = new mongoose.Schema({
     required: true,
   },
   owner: {
-    ref: "user",
+    ref: 'user',
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
@@ -27,7 +27,7 @@ const cardSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-})
+});
 
 const Card = mongoose.model('card', cardSchema);
 module.exports = Card;

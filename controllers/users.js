@@ -14,17 +14,16 @@ const getUsers = (req, res) => {
 const getUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      console.log('user')
       res.send(user);
     })
     .catch(() => {
       errorHandler(404, 'Пользователь по указанному _id не найден.', res);
     });
-}
+};
 
 // create user
 const createUser = (req, res) => {
-  const { name, about, avatar, } = req.body;
+  const { name, about, avatar } = req.body;
   User.create({
     name,
     about,
@@ -40,7 +39,7 @@ const createUser = (req, res) => {
         errorHandler(500, 'На сервере произошла ошибка.', res);
       }
     });
-}
+};
 
 const changeUserInfo = (req, res) => {
   const { name, about } = req.body;
@@ -60,8 +59,8 @@ const changeUserInfo = (req, res) => {
     })
     .catch(() => {
       errorHandler(404, 'Пользователь по указанному _id не найден.', res);
-    })
-}
+    });
+};
 
 const changeUserAvatar = (req, res) => {
   const { avatar } = req.body;
@@ -78,9 +77,9 @@ const changeUserAvatar = (req, res) => {
     })
     .catch(() => {
       errorHandler(404, 'Пользователь по указанному _id не найден.', res);
-    })
-}
+    });
+};
 
 module.exports = {
-  getUsers, getUser, createUser, changeUserInfo, changeUserAvatar
-}
+  getUsers, getUser, createUser, changeUserInfo, changeUserAvatar,
+};

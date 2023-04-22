@@ -1,7 +1,7 @@
 function errorHandler(statusCode, message, res) {
-  res.status(statusCode).send({ message })
+  res.status(statusCode).send({ message });
 }
 
 module.exports = {
   errorHandler,
-}
+};
