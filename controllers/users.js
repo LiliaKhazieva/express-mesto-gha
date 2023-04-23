@@ -1,12 +1,17 @@
 const User = require('../models/user');
 const { errorHandler } = require('../utils/errorHandler');
+const {
+  HTTP_STATUS_BAD_REQUEST,
+  HTTP_STATUS_NOT_FOUND,
+  HTTP_STATUS_INTERNAL_SERVER_ERROR,
+} = require('../utils/constants');
 
 // return all users
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
     .catch(() => {
-      errorHandler(500, 'На сервере произошла ошибка.', res);
+      errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
     });
 };
 
@@ -19,11 +24,11 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        errorHandler(400, 'wrong format.', res);
+        errorHandler(HTTP_STATUS_BAD_REQUEST, 'Переданы некорректные данные.', res);
       } else if (err.name === 'DocumentNotFoundError') {
-        errorHandler(404, 'not found.', res);
+        errorHandler(HTTP_STATUS_NOT_FOUND, 'Пользователь с указанным _id не найден.', res);
       } else {
-        errorHandler(500, '500.', res);
+        errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
       }
     });
 };
@@ -41,9 +46,9 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        errorHandler(400, 'Переданы некорректные данные при создании пользователя.', res);
+        errorHandler(HTTP_STATUS_BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.', res);
       } else {
-        errorHandler(500, 'На сервере произошла ошибка.', res);
+        errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
       }
     });
 };
@@ -60,11 +65,11 @@ const changeUserInfo = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        errorHandler(400, 'Переданы некорректные данные при обновлении профиля.', res);
+        errorHandler(HTTP_STATUS_BAD_REQUEST, 'Переданы некорректные данные при обновлении профиля.', res);
       } else if (err.name === 'DocumentNotFoundError') {
-        errorHandler(404, 'Пользователь с указанным _id не найден.', res);
+        errorHandler(HTTP_STATUS_NOT_FOUND, 'Пользователь с указанным _id не найден.', res);
       } else {
-        errorHandler(500, 'На сервере произошла ошибка.', res);
+        errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
       }
     });
 };
@@ -85,11 +90,11 @@ const changeUserAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        errorHandler(400, 'Переданы некорректные данные при обновлении профиля.', res);
+        errorHandler(HTTP_STATUS_BAD_REQUEST, 'Переданы некорректные данные при обновлении профиля.', res);
       } else if (err.name === 'DocumentNotFoundError') {
-        errorHandler(404, 'Пользователь с указанным _id не найден.', res);
+        errorHandler(HTTP_STATUS_NOT_FOUND, 'Пользователь с указанным _id не найден.', res);
       } else {
-        errorHandler(500, 'На сервере произошла ошибка.', res);
+        errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
       }
     });
 };
