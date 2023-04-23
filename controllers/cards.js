@@ -1,12 +1,18 @@
 const Card = require('../models/card');
 const { errorHandler } = require('../utils/errorHandler');
+const {
+  HTTP_STATUS_BAD_REQUEST,
+  HTTP_STATUS_NOT_FOUND,
+  HTTP_STATUS_INTERNAL_SERVER_ERROR,
+} = require('../utils/constants');
 
 // return all cards
 const getCards = (req, res) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.send(cards))
     .catch(() => {
-      errorHandler(500, 'На сервере произошла ошибка.', res);
+      errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
     });
 };
 
@@ -23,9 +29,9 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        errorHandler(400, 'Переданы некорректные данные при создании карточки.', res);
+        errorHandler(HTTP_STATUS_BAD_REQUEST, 'Переданы некорректные данные при создании карточки.', res);
       } else {
-        errorHandler(500, 'На сервере произошла ошибка.', res);
+        errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
       }
     });
 };
@@ -36,16 +42,17 @@ const deleteCard = (req, res) => {
     owner: req.user._id,
   })
     .orFail()
+    .populate(['owner', 'likes'])
     .then((card) => {
       res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        errorHandler(400, 'Переданы некорректные данные для удаления карточки.', res);
+        errorHandler(HTTP_STATUS_BAD_REQUEST, 'Переданы некорректные данные для удаления карточки.', res);
       } else if (err.name === 'DocumentNotFoundError') {
-        errorHandler(404, 'Карточка с указанным _id не найдена.', res);
+        errorHandler(HTTP_STATUS_NOT_FOUND, 'Карточка с указанным _id не найдена.', res);
       } else {
-        errorHandler(500, 'На сервере произошла ошибка.', res);
+        errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
       }
     });
 };
@@ -56,16 +63,17 @@ const likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail()
+  .populate(['owner', 'likes'])
   .then((card) => {
     res.send(card);
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      errorHandler(400, 'Переданы некорректные данные для постановки/снятии лайка.', res);
+      errorHandler(HTTP_STATUS_BAD_REQUEST, 'Переданы некорректные данные для постановки/снятии лайка.', res);
     } else if (err.name === 'DocumentNotFoundError') {
-      errorHandler(404, 'Передан несуществующий _id карточки.', res);
+      errorHandler(HTTP_STATUS_NOT_FOUND, 'Передан несуществующий _id карточки.', res);
     } else {
-      errorHandler(500, 'На сервере произошла ошибка.', res);
+      errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
     }
   });
 
@@ -75,16 +83,17 @@ const dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail()
+  .populate(['owner', 'likes'])
   .then((card) => {
     res.send(card);
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      errorHandler(400, 'Переданы некорректные данные для постановки/снятии лайка.', res);
+      errorHandler(HTTP_STATUS_BAD_REQUEST, 'Переданы некорректные данные для постановки/снятии лайка.', res);
     } else if (err.name === 'DocumentNotFoundError') {
-      errorHandler(404, 'Передан несуществующий _id карточки.', res);
+      errorHandler(HTTP_STATUS_NOT_FOUND, 'Передан несуществующий _id карточки.', res);
     } else {
-      errorHandler(500, 'На сервере произошла ошибка.', res);
+      errorHandler(HTTP_STATUS_INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка.', res);
     }
   });
 
