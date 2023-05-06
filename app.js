@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const {
-  cardRouter,
-  userRouter,
-} = require('./routes');
+const auth = require('./middlewares/auth');
+const { cardRouter, userRouter } = require('./routes');
+const { login, createUser } = require('./controllers/users');
+const { NotFoundError } = require('./errors');
+const { HTTP_STATUS_INTERNAL_SERVER_ERROR } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 
@@ -18,16 +19,26 @@ mongoose.connect('mongodb://localhost:27017/mestodb')
   });
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '644232bc422e02e6c372a57c', // id статичный
-  };
-  next();
-});
-app.use('/', userRouter);
-app.use('/', cardRouter);
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+app.use('/', auth, userRouter);
+app.use('/', auth, cardRouter);
+
 app.all('*', (req, res, next) => {
-  res.status(404).send({ message: 'Page not found.' });
+  next(new NotFoundError('Страница не найдена'));
+});
+
+app.use((err, req, res, next) => {
+  const { statusCode = HTTP_STATUS_INTERNAL_SERVER_ERROR, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === HTTP_STATUS_INTERNAL_SERVER_ERROR
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
   next();
 });
 
