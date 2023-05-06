@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const { BadRequestError, ConflictError, NotFoundError } = require('../errors');
+const { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } = require('../errors');
 // return all users
 const getUsers = (req, res, next) => {
   User.find({})
@@ -114,7 +114,9 @@ const login = (req, res, next) => {
       });
       return res.send({ token });
     })
-    .catch(next);
+    .catch(() => {
+      next(new UnauthorizedError('Не правильный логин или пароль')); // если пользователь с такими данными не найден то возвращаем 401
+    });
 };
 
 module.exports = {
