@@ -7,25 +7,26 @@ const {
 
 const userRouter = express.Router();
 
-userRouter.get('/users', getUsers);// all users
-userRouter.get('/users/me', getCurrentUser);// current user
-userRouter.get('/users/:userId', celebrate({
+userRouter.get('/', getUsers);// all users
+userRouter.get('/me', getCurrentUser);// current user
+userRouter.get('/:userId', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().length(24).hex().required(),
   }),
 }), getUser);// id user
 
-userRouter.patch('/users/me', celebrate({
+userRouter.patch('/me', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
 }), changeUserInfo);
 
-userRouter.patch('/users/me/avatar', celebrate({
+userRouter.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
     avatar: Joi
       .string()
+      .required()
       .pattern(URL_REGEX),
   }),
 }), changeUserAvatar);

@@ -24,8 +24,6 @@ app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-  }, {
-    statusCode: 400,
   }),
 }), login);
 
@@ -41,8 +39,8 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.use('/', auth, userRouter);
-app.use('/', auth, cardRouter);
+app.use('/users', auth, userRouter);
+app.use('/cards', auth, cardRouter);
 
 app.all('*', (req, res, next) => {
   next(new NotFoundError('Страница не найдена'));

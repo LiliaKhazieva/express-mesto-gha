@@ -1,10 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const {
-  BadRequestError, ConflictError, NotFoundError, UnauthorizedError,
-} = require('../errors');
-
+const { BadRequestError, ConflictError, NotFoundError } = require('../errors');
 // return all users
 const getUsers = (req, res, next) => {
   User.find({})
@@ -44,9 +41,6 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  if (!email || !password) {
-    throw new BadRequestError('Email или пароль не могут быть пустыми');
-  }
   bcrypt.hash(password, 10)
     .then((hash) => {
       User.create({
@@ -120,9 +114,7 @@ const login = (req, res, next) => {
       });
       return res.send({ token });
     })
-    .catch(() => {
-      next(new UnauthorizedError('Не правильный логин или пароль'));
-    });
+    .catch(next);
 };
 
 module.exports = {
