@@ -120,7 +120,10 @@ const login = (req, res, next) => {
       });
       return res.send({ token });
     })
-    .catch(() => next(new UnauthorizedError('Не правильный логин или пароль')));
+    .catch((err) => {
+      console.log(err.name)
+      next(new UnauthorizedError('Не правильный логин или пароль'));
+    });
 };
 
 module.exports = {
