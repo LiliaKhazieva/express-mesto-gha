@@ -1,5 +1,5 @@
 const express = require('express');
-const { celebrate, Joi } = require('celebrate')
+const { celebrate, Joi } = require('celebrate');
 const {
   getCards, createCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
@@ -20,7 +20,7 @@ cardRouter.post('/cards', celebrate({
 
 cardRouter.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({
-    id: Joi.string().length(24).hex().required(),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 }), deleteCard);
 

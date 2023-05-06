@@ -8,13 +8,12 @@ const {
 const userRouter = express.Router();
 
 userRouter.get('/users', getUsers);// all users
+userRouter.get('/users/me', getCurrentUser);// current user
 userRouter.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    id: Joi.string().length(24).hex().required(),
+    userId: Joi.string().length(24).hex().required(),
   }),
 }), getUser);// id user
-
-userRouter.get('/me', getCurrentUser);// current user
 
 userRouter.patch('/users/me', celebrate({
   body: Joi.object().keys({

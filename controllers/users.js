@@ -81,7 +81,7 @@ const changeUserInfo = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       } if (err.name === 'DocumentNotFoundError') {
-        return next(new NotFoundError('Пользователь с указанным _id не найден'));
+        return next(new BadRequestError('Пользователь с указанным _id не найден'));
       }
       return next(err);
     });
@@ -120,8 +120,7 @@ const login = (req, res, next) => {
       });
       return res.send({ token });
     })
-    .catch((err) => {
-      console.log(err.name)
+    .catch(() => {
       next(new UnauthorizedError('Не правильный логин или пароль'));
     });
 };
