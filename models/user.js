@@ -44,15 +44,13 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email })
     .select('+password')
-    .then((user) => {
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            throw new UnauthorizedError('Передан неверный логин или пароль');
-          }
-          return user;
-        });
-    });
+    .then((user) => bcrypt.compare(password, user.password)
+      .then((matched) => {
+        if (!matched) {
+          throw new UnauthorizedError('Передан неверный логин или пароль');
+        }
+        return user;
+      }));
 };
 
 const User = mongoose.model('user', userSchema);
